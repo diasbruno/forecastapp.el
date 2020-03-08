@@ -9,6 +9,7 @@ Forecast.app on Emacs.
 |  Key   |   Description  |
 |-------:|---------------:|
 | v      | Open the project details |
+| RET    | Load sprints of the project |
 
 ## License
 
