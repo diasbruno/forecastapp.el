@@ -13,6 +13,7 @@
 ;;; Code:
 
 (require 'navigel)
+(require 'forecastapp-utils)
 (require 'forecastapp-net)
 (require 'forecastapp-project-view)
 (require 'forecastapp-sprints)
@@ -30,9 +31,9 @@
   "list")
 
 (navigel-method forecastapp-projects navigel-entity-to-columns (project)
-  (vector (cdr (assoc 'name project))
-          (cdr (assoc 'start_date project))
-          (cdr (assoc 'end_date project))))
+  (vector (assocdr 'name project)
+          (assocdr 'start_date project)
+          (assocdr 'end_date project)))
 
 (navigel-method forecastapp-projects navigel-open (project target)
   (setf navigel-init-done-hook #'forecastapp--setup-hooks)
@@ -54,7 +55,7 @@
 (defun forecastapp-sprints (project)
   (interactive)
   (forecast--get-project-sprints
-   (cdr (assoc 'id project))
+   (assocdr 'id project)
    nil
    (cl-function
     (lambda (&key data &allow-other-keys)
