@@ -15,6 +15,7 @@
 (require 'navigel)
 (require 'forecastapp-net)
 (require 'forecastapp-project-view)
+(require 'forecastapp-sprints)
 
 (navigel-method forecastapp-projects navigel-children (projects callback)
   "Call CALLBACK with the files in DIRECTORY as parameter."
@@ -37,11 +38,7 @@
   (setf navigel-init-done-hook #'forecastapp--setup-hooks)
   (case target
     (init (cl-call-next-method))
-    (t
-     ;; TODO(dias): by hitting RET on a project,
-     ;; maybe we load the sprints, if the project use them,
-     ;; or load all tasks on it.
-     (print project))))
+    (t (forecastapp-sprints project))))
 
 (navigel-method forecastapp-projects navigel-delete (project &optional callback)
   (funcall callback))
@@ -53,6 +50,19 @@
     (lambda ()
       (interactive)
       (forecastapp-open-project (navigel-entity-at-point)))))
+
+(defun forecastapp-sprints (project)
+  (interactive)
+  (forecast--get-project-sprints
+   (cdr (assoc 'id project))
+   nil
+   (cl-function
+    (lambda (&key data &allow-other-keys)
+      (let ((navigel-app 'forecastapp-sprints))
+        (navigel-open data 'init))))
+   (cl-function
+    (lambda (&rest args &key error-thrown &allow-other-keys)
+      (print x)))))
 
 (defun forecastapp ()
   "List files of DIRECTORY, home directory if nil."

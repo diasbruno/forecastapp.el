@@ -61,9 +61,28 @@ PROJECTS = [{
     "updated_at": "2017-01-14T18:47:58Z"
 }]
 
+
+SPRINTS = [{
+    "id": 1,
+    "connected_project_sprint": 2,
+    "name": "sprint 1",
+    "start_date": "2017-01-14",
+    "end_date": "2017-01-28",
+    "created_by": 1,
+    "updated_by": 1,
+    "created_at": "2017-01-14T18:46:56Z",
+    "updated_at": "2017-01-14T18:47:58Z"
+}]
+
+
 @app.route('/v1/projects')
 def get_projects():
     return json.dumps(PROJECTS)
+
+
+@app.route('/v1/projects/<int:pid>/sprints')
+def get_sprints_of_project(pid):
+    return json.dumps(SPRINTS)
 
 
 @app.route('/v1/projects/<int:pid>')
