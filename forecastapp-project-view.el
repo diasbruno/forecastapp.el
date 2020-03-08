@@ -12,7 +12,7 @@
 
 ;;; Code:
 
-
+(require 'forecastapp-utils)
 (require 'forecastapp-net)
 
 (defun forecastapp--project-buffer-name (name)
@@ -22,27 +22,27 @@
 (defun forecastapp-open-project (project)
   "Open a PROJECT view."
   (forecast--get-project
-   (cdr (assoc 'id project))
+   (assocdr 'id project)
    nil
    (cl-function
     (lambda (&key data &allow-other-keys)
-      (let* ((pj-name (cdr (assoc 'name data)))
+      (let* ((pj-name (assocdr 'name data))
              (bf-name (forecastapp--project-buffer-name pj-name))
              (bf (get-buffer-create bf-name)))
         (with-buffer bf
           (progn
             (kill-region (point-min) (point-max))
             (insert (concat "Project: " pj-name))
-            (insert (concat " (" (cdr (assoc 'stage data)) ")"
+            (insert (concat " (" (assocdr 'stage data) ")"
                             "\n"))
             (insert (concat "Description: "
-                            (cdr (assoc 'description data))
+                            (assocdr 'description data)
                             "\n"))
             (insert (concat "Start date: "
-                            (cdr (assoc 'start_date data))
+                            (assocdr 'start_date data)
                             "\n"))
             (insert (concat "End date: "
-                            (cdr (assoc 'end_date data))
+                            (assocdr 'end_date data)
                             "\n"))
             (toggle-read-only)
             (pop-to-buffer bf))))))

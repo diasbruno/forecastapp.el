@@ -13,9 +13,8 @@
 ;;; Code:
 
 (require 'navigel)
+(require 'forecastapp-utils)
 (require 'forecastapp-net)
-
-(defalias 'assocdr #'alist-get)
 
 (defun forecastapp--setup-sprint-hook ()
   "Setup the the mode with some extra key bindings."
