@@ -18,6 +18,22 @@
 (require 'forecastapp-project-view)
 (require 'forecastapp-sprints)
 
+(defvar *forecastapp--current-project* nil
+  "Defined when expanding a project.")
+
+(defvar *forecastapp--current-sprint* nil
+  "Defined when expanding a sprint.")
+
+(defun forecastapp--setup-hooks ()
+  "Setup all necessary hooks."
+  (print (current-local-map))
+  (define-key (current-local-map) "v"
+    (lambda ()
+      (interactive)
+      (let ((project (navigel-entity-at-point)))
+        (setf *forecastapp--current-project* project)
+        (forecastapp-open-project project)))))
+
 (navigel-method forecastapp-projects navigel-children (projects callback)
   "Call CALLBACK with the files in DIRECTORY as parameter."
   (funcall callback projects))
@@ -39,34 +55,15 @@
   (setf navigel-init-done-hook #'forecastapp--setup-hooks)
   (case target
     (init (cl-call-next-method))
-    (t (forecastapp-sprints project))))
+    (t (progn
+         (setf *forecastapp--current-project* project)
+         (forecastapp-sprints)))))
 
 (navigel-method forecastapp-projects navigel-delete (project &optional callback)
   (funcall callback))
 
-(defun forecastapp--setup-hooks ()
-  "Setup all necessary hooks."
-  (print (current-local-map))
-  (define-key (current-local-map) "v"
-    (lambda ()
-      (interactive)
-      (forecastapp-open-project (navigel-entity-at-point)))))
-
-(defun forecastapp-sprints (project)
-  (interactive)
-  (forecast--get-project-sprints
-   (assocdr 'id project)
-   nil
-   (cl-function
-    (lambda (&key data &allow-other-keys)
-      (let ((navigel-app 'forecastapp-sprints))
-        (navigel-open data 'init))))
-   (cl-function
-    (lambda (&rest args &key error-thrown &allow-other-keys)
-      (print x)))))
-
 (defun forecastapp ()
-  "List files of DIRECTORY, home directory if nil."
+  "Initialize and list all projects."
   (interactive)
   (forecast--get-projects
      nil
