@@ -64,8 +64,18 @@ PROJECTS = [{
 
 SPRINTS = [{
     "id": 1,
-    "connected_project_sprint": 2,
+    "connected_project_sprint": 1,
     "name": "sprint 1",
+    "start_date": "2017-01-14",
+    "end_date": "2017-01-28",
+    "created_by": 1,
+    "updated_by": 1,
+    "created_at": "2017-01-14T18:46:56Z",
+    "updated_at": "2017-01-14T18:47:58Z"
+}, {
+    "id": 2,
+    "connected_project_sprint": 2,
+    "name": "sprint 2",
     "start_date": "2017-01-14",
     "end_date": "2017-01-28",
     "created_by": 1,
@@ -93,6 +103,16 @@ def get_project(pid):
             project = p
             break
     return json.dumps(project)
+
+
+@app.route('/v1/projects/<int:pid>/sprints/<int:sid>')
+def get_sprint_of_project(pid, sid):
+    sprint = None
+    for s in SPRINTS:
+        if s['id'] == sid and s['connected_project_sprint'] == pid:
+            sprint = s
+            break
+    return json.dumps(sprint)
 
 
 if __name__ == '__main__':

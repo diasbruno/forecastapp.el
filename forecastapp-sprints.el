@@ -13,12 +13,23 @@
 ;;; Code:
 
 (require 'navigel)
+(require 'forecastapp)
 (require 'forecastapp-utils)
 (require 'forecastapp-net)
+(provide 'forecastapp-sprint-view)
 
 (defun forecastapp--setup-sprint-hook ()
   "Setup the the mode with some extra key bindings."
-  nil)
+  (define-key (current-local-map) "v"
+    (lambda ()
+      (interactive)
+      (let ((project *forecastapp--current-project*)
+            (sprint (navigel-entity-at-point)))
+        (if (not (null project))
+            (progn
+              (setf *forecastapp--current-sprint* sprint)
+              (forecastapp-open-sprint))
+          (error "Project not selected"))))))
 
 (navigel-method forecastapp-sprints navigel-buffer-name (sprint)
   "sprints")
@@ -48,6 +59,23 @@
 
 (navigel-method forecastapp-sprints navigel-delete (sprint &optional callback)
   (funcall callback))
+
+(defun forecastapp-sprints ()
+  "List all sprints of a project."
+  (interactive)
+  (let ((project *forecastapp--current-project*))
+      (if (not (null project))
+        (forecast--get-project-sprints
+         (assocdr 'id project)
+         nil
+         (cl-function
+          (lambda (&key data &allow-other-keys)
+            (let ((navigel-app 'forecastapp-sprints))
+              (navigel-open data 'init))))
+         (cl-function
+          (lambda (&rest args &key error-thrown &allow-other-keys)
+            (print x))))
+      (error "Project not defined"))))
 
 (provide 'forecastapp-sprints)
 ;;; forecastapp-sprints.el ends here
