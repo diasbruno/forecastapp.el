@@ -17,7 +17,7 @@
 
 (defun forecastapp--project-buffer-name (name)
   "Make the project buffer name with project NAME."
-  (concat "forecastapp: " name))
+  (concat "forecastapp-project: " name))
 
 (defun forecastapp-open-project (project)
   "Open a PROJECT view."
